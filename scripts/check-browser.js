@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import { resolve, join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { createServer } from '../server.js';
+import { stopChild } from './stop-child.js';
 
 const html = await readFile('public/index.html', 'utf8');
 const browser = await chromium.launch({
@@ -61,6 +62,9 @@ try {
       });
       await checkPage(url);
       console.log('Windows EXE: design and lookup interaction verified in Chromium from an empty folder.');
-    } finally { child.kill(); await rm(cwd, { recursive: true, force: true }); }
+    } finally {
+      await stopChild(child);
+      await rm(cwd, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+    }
   }
 } finally { await browser.close(); }

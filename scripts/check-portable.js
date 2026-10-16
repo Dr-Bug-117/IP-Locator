@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createServer } from '../server.js';
+import { stopChild } from './stop-child.js';
 
 const directory = await mkdtemp(join(tmpdir(), 'ip-locator-check-'));
 const child = spawn(process.execPath, [resolve('build/portable.cjs'), '--no-open'], { cwd: directory, stdio: ['ignore', 'pipe', 'pipe'] });
@@ -41,7 +42,7 @@ try {
   assert.equal(bytes.readUInt16LE(bytes.readUInt32LE(60) + 4), 0x8664);
   console.log('Windows download endpoint returns the exact x64 executable with attachment headers.');
 } finally {
-  child.kill();
+  await stopChild(child);
   if (web) await new Promise(resolveClose => web.close(resolveClose));
-  await rm(directory, { recursive: true, force: true });
+  await rm(directory, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
 }
