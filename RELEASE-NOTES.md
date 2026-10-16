@@ -1,5 +1,7 @@
 Portable IP Locator for Windows 10/11 x64. Download **IP-Locator.exe** below, then double-click it. No installer, Node.js installation, or administrator access is required.
 
+Version 1.0.3 adds “Developed by Justice Floyd” to the application footer.
+
 Version 1.0.1 fixes the unstyled page and unresponsive Locate IP button caused by Windows line endings invalidating the page's security hashes. Browser regression checks now cover Windows line endings and the packaged executable.
 
 Version 1.0.2 fixes a Windows test-cleanup race that prevented release publishing after those browser checks passed. Cleanup now waits for the application to exit before removing its temporary working directory.
