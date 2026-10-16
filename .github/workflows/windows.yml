@@ -1,6 +1,12 @@
 name: Build portable Windows application
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Existing version tag to build and publish (leave empty for build only)'
+        required: false
+        default: 'v1.0.1'
+        type: string
   push:
     branches: [main]
     tags: ['v*']
@@ -11,6 +17,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -53,13 +61,15 @@ jobs:
             downloads/IP-Locator.exe.sha256
             downloads/WINDOWS-README.txt
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     needs: windows
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
       - uses: actions/download-artifact@v4
         with:
           name: IP-Locator-Windows-x64
@@ -67,6 +77,10 @@ jobs:
       - name: Publish tested Windows download
         env:
           GH_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
         run: |
-          gh release create "$RELEASE_TAG" release-files/IP-Locator.exe release-files/IP-Locator.exe.sha256 release-files/WINDOWS-README.txt --verify-tag --title "IP Locator $RELEASE_TAG" --notes-file RELEASE-NOTES.md
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" release-files/IP-Locator.exe release-files/IP-Locator.exe.sha256 release-files/WINDOWS-README.txt --clobber
+          else
+            gh release create "$RELEASE_TAG" release-files/IP-Locator.exe release-files/IP-Locator.exe.sha256 release-files/WINDOWS-README.txt --verify-tag --title "IP Locator $RELEASE_TAG" --notes-file RELEASE-NOTES.md
+          fi
