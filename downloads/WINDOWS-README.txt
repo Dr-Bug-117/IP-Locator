@@ -25,3 +25,16 @@ the distributor's Windows code-signing certificate.
 Location estimates may disagree. Choose a provider in the map selector to view
 its estimate. Provider agreement does not verify the actual device location.
 Network ownership and reverse-DNS names are clues, not a confirmed address.
+
+Version 1.2 includes a Public network details panel with provider-reported
+VPN/proxy/Tor and other indicators, public registration contacts and dates,
+observed routing information, and JSON report download. Missing indicators
+are Unknown, not No. Registry contacts are public network-operation contacts,
+not the person using the address. External reputation links are provided for
+manual research; their detailed report histories are not automatically checked.
+
+Additional queries send the entered IP to api.ipapi.is, rdap.org (which redirects
+to the appropriate regional registry), and stat.ripe.net. Internet access and
+provider availability/quotas affect these features. No API keys are embedded.
+The app cannot retrieve Windows usernames, operating systems, files, passwords,
+device models, or MAC addresses from a public IP alone.

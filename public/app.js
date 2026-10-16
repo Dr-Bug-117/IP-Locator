@@ -6,10 +6,118 @@ const results = document.querySelector('#results');
 const details = document.querySelector('#details');
 const mapProvider = document.querySelector('#map-provider');
 let activeEstimates = [];
+let intelligenceController;
+let lookupId = 0;
+let activeReport;
+const exportReport = document.querySelector('#export-report');
 let busy = false;
 status.textContent = '';
 
+function renderFacts(selector, fields) {
+  const list = document.querySelector(selector);
+  list.replaceChildren();
+  for (const [name, value] of Object.entries(fields)) {
+    const item = document.createElement('div');
+    const term = document.createElement('dt');
+    const detail = document.createElement('dd');
+    term.textContent = name;
+    detail.textContent = value === null || value === undefined || value === '' ? 'Unknown / not provided' : String(value);
+    item.append(term, detail);
+    list.append(item);
+  }
+}
+function refreshRawEvidence() {
+  if (!activeReport) return;
+  document.querySelector('#raw-evidence').textContent = JSON.stringify(activeReport, null, 2);
+  exportReport.disabled = activeReport.geolocationStatus === 'pending' || activeReport.intelligenceStatus === 'pending';
+}
+async function showIntelligence(ip, id) {
+  intelligenceController = new AbortController();
+  const signal = intelligenceController.signal;
+  document.querySelector('#intelligence').hidden = false;
+  document.querySelector('#intelligence-status').textContent = 'Retrieving network classification and public registration…';
+  for (const selector of ['#address-facts', '#network-facts', '#routing-facts', '#registration-facts', '#abuse-contact', '#network-indicators', '#registration-events', '#registration-contacts', '#registration-notices', '#reputation-links', '#raw-evidence']) document.querySelector(selector).replaceChildren();
+  document.querySelector('#network-source').textContent = 'Waiting for provider…';
+  document.querySelector('#registration-source').textContent = 'Waiting for registry…';
+  document.querySelector('#routing-source').textContent = 'Waiting for routing data…';
+  const address = addressDetails(ip);
+  renderFacts('#address-facts', { 'Canonical address': address.canonical, Version: address.version, 'Address length (bits)': address.bits, 'Locally recognized scope': address.scope, 'Expanded address': address.expanded, Decimal: address.decimal, Hexadecimal: address.hexadecimal, Binary: address.binary, 'Reverse-DNS query name': address.reverseQuery });
+  const links = document.querySelector('#reputation-links');
+  for (const [name, url] of [['AbuseIPDB', `https://www.abuseipdb.com/check/${encodeURIComponent(ip)}`], ['VirusTotal', `https://www.virustotal.com/gui/ip-address/${encodeURIComponent(ip)}`], ['Cisco Talos', `https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(ip)}`]]) {
+    const link = document.createElement('a');
+    link.textContent = `${name} ↗`;
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    links.append(link);
+  }
+  try {
+    const data = await lookupIntelligence(ip, { signal });
+    if (id !== lookupId || signal.aborted || !data) return;
+    activeReport.intelligence = data;
+    activeReport.intelligenceStatus = 'complete';
+    const network = data.network || { status: 'unavailable' };
+    const registration = data.registration || { status: 'unavailable' };
+    document.querySelector('#network-source').textContent = `${network.source || 'Network provider'} · ${network.status}${network.message ? ' · ' + network.message : ''}`;
+    renderFacts('#network-facts', network.network || { Classification: 'Unavailable' });
+    const routing = data.routing || { status: 'unavailable' };
+    document.querySelector('#routing-source').textContent = `${routing.source || 'RIPEstat'} · ${routing.status}${routing.message ? ' · ' + routing.message : ''}`;
+    renderFacts('#routing-facts', { 'Observed BGP prefix': routing.prefix, 'Observed origin ASNs': routing.originAsns?.map(asn => `AS${asn}`).join(', ') });
+    const labels = { is_vpn: 'VPN', is_proxy: 'Proxy', is_tor: 'Tor exit', is_datacenter: 'Datacenter / hosting', is_mobile: 'Mobile network', is_crawler: 'Crawler', is_satellite: 'Satellite network', is_abuser: 'Provider abuse indicator', is_bogon: 'Bogon / special-use' };
+    for (const [key, label] of Object.entries(labels)) {
+      const item = document.createElement('div');
+      const name = document.createElement('span');
+      const value = document.createElement('strong');
+      const flag = network.indicators?.[key];
+      name.textContent = label;
+      value.textContent = flag === true ? 'Yes · provider-reported' : flag === false ? 'No · provider-reported' : 'Unknown';
+      item.append(name, value);
+      document.querySelector('#network-indicators').append(item);
+    }
+    document.querySelector('#registration-source').textContent = `${registration.source || 'RDAP registry'} · ${registration.status}${registration.message ? ' · ' + registration.message : ''}. Registered country is an allocation record, not device location.`;
+    renderFacts('#registration-facts', registration.fields || { Registration: 'Unavailable' });
+    renderFacts('#abuse-contact', network.abuse || { Contact: 'Not provided' });
+    for (const event of registration.events || []) {
+      const line = document.createElement('p');
+      line.textContent = `${event.action}: ${event.date}`;
+      document.querySelector('#registration-events').append(line);
+    }
+    const contacts = document.querySelector('#registration-contacts');
+    for (const contact of registration.contacts || []) {
+      const line = document.createElement('p');
+      line.textContent = [contact.roles?.join(', '), contact.name, contact.organization, contact.handle, contact.email, contact.phone].filter(Boolean).join(' · ');
+      contacts.append(line);
+    }
+    if (!contacts.childElementCount) contacts.textContent = 'No public contacts returned.';
+    for (const notice of registration.notices || []) {
+      const line = document.createElement('p');
+      line.textContent = [notice.title, notice.text].filter(Boolean).join(': ');
+      document.querySelector('#registration-notices').append(line);
+    }
+    document.querySelector('#intelligence-status').textContent = `Sources checked ${new Date(data.checkedAt).toLocaleString()}. Unavailable services are not negative findings.`;
+  } catch {
+    if (id !== lookupId || signal.aborted) return;
+    document.querySelector('#intelligence-status').textContent = 'Extra detail services are unavailable. Address facts and any location results remain available.';
+  } finally {
+    if (id === lookupId && !signal.aborted) {
+      if (activeReport.intelligenceStatus === 'pending') activeReport.intelligenceStatus = 'unavailable';
+      refreshRawEvidence();
+    }
+  }
+}
+exportReport.addEventListener('click', () => {
+  if (!activeReport) return;
+  const blob = new Blob([JSON.stringify(activeReport, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `ip-locator-${activeReport.queriedIp.replace(/:/g, '_')}.json`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
 function showEstimate(data) {
+  renderFacts('#context-facts', data.context || { 'Additional fields': 'Not provided; inspect raw responses below' });
   details.replaceChildren();
   for (const [label, value] of [['Estimated region', data.region], ['Estimated country', data.country], ['Estimated coordinates', `${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)}`], ['Timezone', data.timezone], ['Network operator / ISP', data.isp], ['Network owner / ASN', data.asn ? `AS${data.asn} · ${data.organization || ''}` : data.organization]]) {
     const item = document.createElement('div');
@@ -34,6 +142,11 @@ mapProvider.addEventListener('change', () => {
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if (busy) return;
+  intelligenceController?.abort();
+  const id = ++lookupId;
+  activeReport = null;
+  document.querySelector('#intelligence').hidden = true;
+  exportReport.disabled = true;
   busy = true;
   submit.disabled = true;
   submit.textContent = 'Locating…';
@@ -43,7 +156,13 @@ form.addEventListener('submit', async event => {
   status.textContent = 'Looking up the address…';
   status.classList.remove('error');
   try {
-    const data = await lookupAddress(input.value);
+    const ip = normalizeAddress(input.value);
+    activeReport = { queriedIp: ip, checkedAt: new Date().toISOString(), geolocationStatus: 'pending', intelligenceStatus: 'pending', geolocation: null, intelligence: null, limitations: 'Public network data cannot identify a device, account, or exact physical location. Unknown flags are not negative findings.' };
+    void showIntelligence(ip, id);
+    const data = await lookupAddress(ip);
+    activeReport.geolocation = data;
+    activeReport.geolocationStatus = 'complete';
+    refreshRawEvidence();
     const estimates = data.estimates || [{ ...data, provider: data.provider || 'Location provider', status: 'available' }];
     const comparison = data.comparison || compareEstimates(estimates);
     document.querySelector('#location').textContent = comparison.state === 'disagreement' ? 'Location estimates differ' : [data.city, data.country].filter(Boolean).join(', ') || 'Location estimates';
@@ -82,6 +201,11 @@ form.addEventListener('submit', async event => {
     results.hidden = false;
     status.textContent = '';
   } catch (error) {
+    if (activeReport) {
+      activeReport.geolocationStatus = 'unavailable';
+      activeReport.geolocationError = error.message;
+      refreshRawEvidence();
+    }
     status.textContent = error.name === 'TimeoutError' ? 'The lookup timed out. Please try again.' : error instanceof TypeError ? 'Unable to reach the lookup server. Open the app through its running Node web server and try again.' : error.message;
     status.classList.add('error');
     document.querySelector('#empty').hidden = false;

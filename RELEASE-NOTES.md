@@ -1,5 +1,17 @@
 Portable IP Locator for Windows 10/11 x64. Download **IP-Locator.exe** below, then double-click it. No installer, Node.js installation, or administrator access is required.
 
+Version 1.2.0 adds an expanded public-IP details panel:
+
+- IPv4/IPv6 canonical, expanded, decimal, hex, binary, reverse-query, and common special-use address facts.
+- Network company, categories, ASN, reported routes, hosting/VPN provider, and provider abuse scores when returned by ipapi.is.
+- VPN, proxy, Tor, hosting, mobile, crawler, satellite, abuse, and bogon indicators, with Unknown for missing fields. Negative flags are not a clean bill of health.
+- RDAP allocation range, CIDRs, handles, allocation status, dates, notices, and public registry/abuse contacts.
+- Observed BGP prefix and origin ASNs from RIPEstat.
+- Additional provider location/country context, all returned source fields, and a downloadable JSON evidence report.
+- External reputation research links for AbuseIPDB, VirusTotal, and Cisco Talos. Detailed histories from these services are not automatically retrieved.
+
+The extra sources load independently of geolocation and may be unavailable or rate-limited. Their public records do not reveal the device, operating system, Windows account, personal files, or exact street address. No target port scanning or device access is performed.
+
 Version 1.1.0 adds a location evidence comparison:
 
 - Side-by-side city, region, country, and coordinate estimates from ipwho.is and ipapi.co.

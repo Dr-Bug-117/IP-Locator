@@ -3,6 +3,7 @@ import { isIP } from 'node:net';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { collectEvidence } from './public/providers.js';
+import { collectIntelligence } from './public/intelligence.js';
 
 export function parseAddress(value) {
   const address = value.trim();
@@ -51,11 +52,11 @@ export function createServer({ fetcher = fetch, page } = {}) {
       } catch { send(503, { error: 'Download not built. Run npm run build.' }); }
       return;
     }
-    if (url.pathname === '/api/lookup') {
+    if (url.pathname === '/api/lookup' || url.pathname === '/api/intelligence') {
       const ip = parseAddress(url.searchParams.get('ip') || '');
       if (!isIP(ip)) return send(400, { error: 'Enter a valid IPv4 or IPv6 address.' });
       try {
-        send(200, await collectEvidence(ip, fetcher));
+        send(200, await (url.pathname === '/api/intelligence' ? collectIntelligence(ip, fetcher) : collectEvidence(ip, fetcher)));
       } catch (error) {
         send(error.status || 502, { error: error.status ? error.message : 'The location service is unavailable. Please try again shortly.' });
       }
@@ -72,7 +73,7 @@ export function createServer({ fetcher = fetch, page } = {}) {
         const hash = text => `'sha256-${createHash('sha256').update(text.replace(/\r\n?/g, '\n')).digest('base64')}'`;
         const style = html.match(/<style>([\s\S]*?)<\/style>/)?.[1] || '';
         const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1] || '';
-        res.setHeader('Content-Security-Policy', `default-src 'self'; connect-src 'self' https://ipapi.co https://ipwho.is https://dns.google; frame-src https://www.openstreetmap.org; style-src 'self' ${hash(style)}; script-src 'self' ${hash(script)}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`);
+        res.setHeader('Content-Security-Policy', `default-src 'self'; connect-src 'self' https://ipapi.co https://ipwho.is https://dns.google https://api.ipapi.is https://rdap.org https://rdap.arin.net https://rdap.db.ripe.net https://rdap.apnic.net https://rdap.lacnic.net https://rdap.afrinic.net https://stat.ripe.net; frame-src https://www.openstreetmap.org; style-src 'self' ${hash(style)}; script-src 'self' ${hash(script)}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`);
       }
       res.writeHead(200, { 'Content-Type': `${file[1]}; charset=utf-8` });
       res.end(content);

@@ -3,12 +3,19 @@ export function normalizeEstimate(provider, data) {
   const { latitude, longitude } = data;
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) throw new Error('No valid coordinates returned');
   return {
-    provider, status: 'available', ip: data.ip, type: data.type || data.version,
+    provider, status: 'available', ip: data.ip, type: data.type || data.version, raw: data,
     city: data.city || '', region: data.region || '', country: data.country_name || data.country || '',
     countryCode: data.country_code || data.country || '', latitude, longitude,
     timezone: typeof data.timezone === 'object' ? data.timezone?.id : data.timezone,
     isp: data.connection?.isp || data.org, organization: data.connection?.org || data.org,
     asn: String(data.connection?.asn || data.asn || '').replace(/^AS/i, ''),
+    context: Object.fromEntries([
+      ['Continent', data.continent || data.continent_code], ['Postal estimate', data.postal], ['Country capital', data.country_capital || data.capital],
+      ['Country calling code', data.country_calling_code || data.calling_code], ['Country area (km²)', data.country_area], ['Country population', data.country_population],
+      ['Country currency', typeof data.currency === 'string' ? data.currency : data.currency?.code], ['Country languages', data.languages],
+      ['EU member country', data.in_eu ?? data.is_eu], ['UTC offset', data.utc_offset || data.timezone?.utc],
+      ['Timezone abbreviation', data.timezone?.abbr], ['Daylight saving reported', data.timezone?.is_dst], ['Network domain', data.connection?.domain], ['Provider network prefix', data.network],
+    ].map(([key, value]) => [key, ['string', 'number', 'boolean'].includes(typeof value) ? value : null])),
   };
 }
 
