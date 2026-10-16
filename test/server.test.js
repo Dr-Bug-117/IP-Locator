@@ -78,3 +78,18 @@ test('handles reserved addresses and provider failures', async t => {
   const malformed = await serve(t, async () => Response.json({ success: true, latitude: 'invalid' }));
   assert.equal((await malformed('/api/lookup?ip=8.8.8.8')).status, 502);
 });
+
+test('API returns provider comparisons and DNS evidence with partial outages', async t => {
+  const request = await serve(t, async url => {
+    if (url.includes('dns.google')) return Response.json({ Status: 0, Answer: [{ type: 12, data: 'gateway.example.net.' }] });
+    if (url.includes('ipapi.co')) return new Response('', { status: 429 });
+    return Response.json({ success: true, ip: '65.43.157.17', type: 'IPv4', city: 'Jackson', country: 'United States', latitude: 32.3, longitude: -90.2 });
+  });
+  const response = await request('/api/lookup?ip=65.43.157.17');
+  assert.equal(response.status, 200);
+  const data = await response.json();
+  assert.equal(data.comparison.state, 'limited');
+  assert.equal(data.estimates[1].status, 'unavailable');
+  assert.match(data.estimates[1].message, /Rate limit/);
+  assert.deepEqual(data.reverseDns.hostnames, ['gateway.example.net']);
+});

@@ -45,7 +45,7 @@ For an HTML download hosted on a different origin, use the Content-Disposition h
 
 ## Connectivity and privacy
 
-The downloaded app sends the entered IP address to `https://ipapi.co` for approximate geolocation. Its map sends coordinates to OpenStreetMap. It does not save lookup history. Provider usage limits and terms apply. Firewalls, browser extensions, or a sandboxed document viewer may block requests; the app reports connection errors.
+The app sends the entered IP address to `https://ipwho.is` and `https://ipapi.co` for comparison estimates, and `https://dns.google` for reverse DNS. Its map sends coordinates to OpenStreetMap. It does not save lookup history. Provider usage limits and terms apply. Firewalls, browser extensions, or a sandboxed document viewer may block requests; the app reports connection errors.
 
 ## Verification status
 

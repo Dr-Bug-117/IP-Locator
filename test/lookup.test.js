@@ -14,7 +14,9 @@ test('standalone page looks up directly without a Node backend', async () => {
     calls.push(url);
     return Response.json({ ip: '104.26.5.123', latitude: 37.7, longitude: -122.4, country_name: 'United States', org: 'Cloudflare', asn: 'AS13335' });
   } });
-  assert.deepEqual(calls, ['https://ipapi.co/104.26.5.123/json/']);
+  assert.equal(calls.length, 3);
+  assert.ok(calls.includes('https://ipapi.co/104.26.5.123/json/'));
+  assert.equal(result.comparison.state, 'limited');
   assert.equal(result.isp, 'Cloudflare');
   assert.equal(result.asn, '13335');
 });
@@ -25,8 +27,8 @@ test('static hosted page falls back when its origin serves HTML instead of an AP
     calls.push(url);
     return url.startsWith('/') ? new Response('<html>Static host</html>', { headers: { 'content-type': 'text/html' } }) : Response.json({ ip: '8.8.8.8', latitude: 37, longitude: -122 });
   } });
-  assert.equal(calls.length, 2);
-  assert.equal(calls[1], 'https://ipapi.co/8.8.8.8/json/');
+  assert.equal(calls.length, 4);
+  assert.ok(calls.includes('https://ipapi.co/8.8.8.8/json/'));
 });
 
 test('blocked browser network produces an actionable error', async () => {

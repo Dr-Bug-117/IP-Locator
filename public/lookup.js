@@ -1,3 +1,4 @@
+import { collectEvidence } from './providers.js';
 // Shared by the bundled browser page and Node tests. No dependency on a local API.
 export function normalizeAddress(value) {
   let ip = value.trim();
@@ -31,16 +32,9 @@ export async function lookupAddress(value, { fetcher = fetch, protocol = locatio
     }
   }
   try {
-    const response = await fetcher(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, { signal: AbortSignal.timeout(12000), credentials: 'omit' });
-    if (!response.ok) throw new Error(response.status === 429 ? 'The location provider reached its request limit. Please try again later.' : 'The location provider is unavailable. Please try again later.');
-    const data = await response.json();
-    if (data.error) throw new Error('This address has no public geolocation. Try a public IP address.');
-    if (!Number.isFinite(data.latitude) || !Number.isFinite(data.longitude)) throw new Error('No coordinates are available for this address.');
-    return { ip: data.ip, type: data.version, city: data.city, region: data.region, country: data.country_name,
-      latitude: data.latitude, longitude: data.longitude, timezone: data.timezone, isp: data.org,
-      organization: data.org, asn: data.asn?.replace(/^AS/, ''), provider: 'ipapi.co' };
+    return await collectEvidence(ip, fetcher);
   } catch (error) {
-    if (error instanceof TypeError || error.name === 'TimeoutError') throw new Error('This viewer could not connect to the location service. Open the downloaded HTML in a browser or use a hosted copy. If the viewer asks for network access, allow ipapi.co.');
+    if (error.status === 502) throw new Error('This viewer could not connect to the location providers. Check your connection and allow ipwho.is, ipapi.co, and dns.google if prompted.');
     throw error;
   }
 }

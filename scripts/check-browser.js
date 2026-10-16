@@ -15,13 +15,14 @@ const result = { ip: '104.26.5.123', type: 'IPv4', city: 'San Francisco', countr
 
 async function checkPage(url) {
   const page = await browser.newPage();
+  let payload = result;
   const violations = [];
   page.on('pageerror', error => violations.push(error.message));
   page.on('console', message => { if (/violates.*Content Security Policy/.test(message.text())) violations.push(message.text()); });
   await page.route('https://www.openstreetmap.org/**', route => route.fulfill({ contentType: 'text/html', body: '<p>Test map</p>' }));
   await page.route('**/api/lookup?*', route => {
     assert.equal(new URL(route.request().url()).searchParams.get('ip'), '104.26.5.123');
-    return route.fulfill({ json: result });
+    return route.fulfill({ json: payload });
   });
   try {
     await page.goto(url);
@@ -32,6 +33,24 @@ async function checkPage(url) {
     await page.locator('#results').waitFor({ state: 'visible', timeout: 10000 });
     assert.equal(await page.locator('#location').textContent(), 'San Francisco, United States');
     assert.match(await page.locator('#details').textContent(), /Cloudflare/);
+    const estimates = [
+      { ...result, provider: 'ipwho.is', status: 'available', city: 'Jackson', region: 'Mississippi', latitude: 32.2988, longitude: -90.1848 },
+      { ...result, provider: 'ipapi.co', status: 'available', city: 'Tupelo', region: 'Mississippi', latitude: 34.2576, longitude: -88.7034 },
+    ];
+    payload = { ...estimates[0], estimates, comparison: { state: 'disagreement', available: 2, total: 2, spreadKm: 258 }, reverseDns: { status: 'available', hostnames: ['router.example.net'] }, checkedAt: new Date().toISOString() };
+    await page.locator('#submit').click();
+    await page.locator('#location').filter({ hasText: 'Location estimates differ' }).waitFor();
+    assert.match(await page.locator('#provider-cards').textContent(), /Jackson.*Tupelo/s);
+    assert.match(await page.locator('#comparison-summary').textContent(), /actual device location is unresolved/);
+    assert.match(await page.locator('#reverse-dns').textContent(), /router.example.net/);
+    await page.locator('#map-provider').selectOption('ipapi.co');
+    assert.match(await page.locator('#map-caption').textContent(), /Tupelo/);
+    assert.match(await page.locator('#map').getAttribute('src'), /34.2576/);
+    payload = { ...estimates[0], estimates: [estimates[0], { provider: 'ipapi.co', status: 'unavailable', message: 'Provider unavailable' }], comparison: { state: 'limited', available: 1, total: 2, spreadKm: 0 }, reverseDns: { status: 'not_found', hostnames: [] } };
+    await page.locator('#submit').click();
+    await page.locator('#comparison-summary').filter({ hasText: 'Only one provider' }).waitFor();
+    assert.equal(await page.locator('#map-provider option').count(), 1);
+    assert.match(await page.locator('#reverse-dns').textContent(), /No reverse-DNS hostname/);
     assert.deepEqual(violations, []);
   } finally { await page.close(); }
 }

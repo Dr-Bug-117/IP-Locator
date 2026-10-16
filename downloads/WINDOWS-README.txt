@@ -14,9 +14,14 @@ The console displays a local-only URL if the browser does not open automatically
 The app binds to 127.0.0.1 on an available port, not to your public network.
 
 Geolocation and map data require Internet access. Locations are approximate.
-The app sends queried IP addresses to ipwho.is (or ipapi.co as a fallback),
+The app sends queried IP addresses to ipwho.is and ipapi.co for comparisons,
+to Google Public DNS (dns.google) for reverse-DNS hostname clues,
 and map coordinates to OpenStreetMap. It does not store lookup history.
 
 This build is unsigned. Windows or your organization's security tools may
 warn about or restrict an unsigned executable. Production signing requires
 the distributor's Windows code-signing certificate.
+
+Location estimates may disagree. Choose a provider in the map selector to view
+its estimate. Provider agreement does not verify the actual device location.
+Network ownership and reverse-DNS names are clues, not a confirmed address.

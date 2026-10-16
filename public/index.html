@@ -1,22 +1,90 @@
 <!doctype html>
 <html lang="en">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Find the approximate location and network behind a public IP address."><title>IP Locator — Find your coordinates</title><style>:root{font-family:Arial,Helvetica,sans-serif;color:#183d38;background:#f6f7f2;font-synthesis:none}*{box-sizing:border-box}body{margin:0;background:#f6f7f2;color:#183d38;min-height:100vh;color-scheme:light}header,footer{max-width:1240px;margin:auto;padding:30px 48px;display:flex;align-items:center;justify-content:space-between}header{border-bottom:1px solid #dce2d9}.brand{font-size:15px;font-weight:800;letter-spacing:2px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px}.brand-icon{font-size:33px;color:#2a695a}.header-note{color:#75827a;font-size:12px;display:flex;align-items:center;gap:9px}i{width:6px;height:6px;background:#739d62;border-radius:50%}main{max-width:1040px;margin:auto;padding:70px 32px 35px}.eyebrow{font-size:10px;font-weight:700;letter-spacing:2.3px;color:#567568}.intro{text-align:center}h1{font-size:clamp(44px,6vw,72px);line-height:1.07;letter-spacing:-3px;margin:24px 0}h1 em{font-family:Georgia,serif;font-weight:400;color:#729464}.description{font-size:15px;line-height:1.8;color:#768078;margin:0 0 37px}.lookup{background:white;border:1px solid #dce3d8;border-radius:12px;padding:25px 27px 18px;box-shadow:0 8px 26px #193b3010}label{display:block;font-size:10px;font-weight:bold;letter-spacing:1.6px;margin-bottom:12px}.input-row{display:flex;border:1px solid #d9e1d6;background:#fafbf8;border-radius:7px;padding:7px;align-items:center;gap:12px}.input-row>span{font-size:25px;color:#8b9e8c;margin-left:9px}input{flex:1;min-width:0;border:0;background:transparent;font-size:15px;padding:10px 0;color:#183d38}input:focus{outline:none}.input-row:focus-within{outline:2px solid #7c9c6e;outline-offset:2px}button{cursor:pointer;font:inherit}.input-row button{background:#254d40;color:white;border:0;border-radius:5px;padding:15px 23px;font-size:13px;white-space:nowrap}.input-row button:hover{background:#36644f}button:disabled{opacity:.6;cursor:wait}.input-row button span{margin-left:22px}.examples{display:flex;gap:12px;align-items:center;margin-top:16px;font-size:11px;color:#879184}.examples button{border:0;background:#f0f3eb;color:#557447;padding:5px 9px;border-radius:4px;font-size:11px}.support{margin-left:auto;font-size:10px}#status{font-size:13px;margin:14px 0 0}#status:empty{display:none}.error{color:#a13f2a}.empty{margin-top:28px;padding:40px 32px;display:flex;gap:25px;align-items:center;border:1px dashed #cbd6c6;border-radius:10px;position:relative;min-height:185px;background:radial-gradient(ellipse at 10% 50%,#e8eee0,transparent 55%)}.empty h2{font-family:Georgia,serif;font-weight:400;font-size:25px;margin:10px 0}.empty p:last-child{font-size:12px;color:#7e897a;line-height:1.6}.globe{border:1px solid #b5c8aa;width:85px;height:85px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;background:repeating-linear-gradient(0deg,transparent,transparent 19px,#bccfb055 20px)}.globe span{font-size:50px;font-weight:100;color:#7a9865}.empty-number{position:absolute;right:20px;top:20px;font-size:8px;letter-spacing:1px;color:#98a48f}aside{display:flex;gap:10px;max-width:700px;margin:28px auto 0;color:#8a9386;font-size:11px;line-height:1.7}aside>span{padding-top:10px}footer{border-top:1px solid #dce2d9;font-size:10px;color:#879180;margin-top:20px}a{color:inherit}#results{margin-top:30px;padding:28px;background:white;border:1px solid #dce3d8;border-radius:10px}.result-heading{display:flex;justify-content:space-between;align-items:center;gap:10px}.result-heading h2{font-family:Georgia,serif;font-size:30px;font-weight:400;margin:9px 0}.result-heading p:last-child{color:#788573;font-size:12px}.tag{background:#eef3e7;color:#63814f;font-size:8px;letter-spacing:1px;padding:8px;border-radius:4px}.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:25px;margin-top:15px}dl{display:grid;grid-template-columns:1fr 1fr;gap:22px 12px}dt{font-size:10px;color:#879181;margin-bottom:6px}dd{font-size:13px;margin:0;overflow-wrap:anywhere}#map{width:100%;height:270px;border:1px solid #dce3d8;border-radius:8px}#map-link{display:inline-block;font-size:11px;margin:12px 0;color:#58794b}[hidden]{display:none!important}:focus-visible{outline:2px solid #729464;outline-offset:3px}@media(max-width:650px){header,footer{padding:22px}.header-note{display:none}main{padding:45px 20px 25px}h1{letter-spacing:-2px}.lookup{padding:20px 14px}.input-row{gap:6px}.input-row>span{display:none}.input-row button{padding:13px 12px}.input-row button span{margin-left:5px}input{font-size:12px;padding-left:5px}.support{display:none}.examples{gap:7px}.empty{padding:38px 20px;gap:15px}.globe{width:55px;height:55px}.empty h2{font-size:22px}.result-grid{grid-template-columns:1fr}.result-heading{align-items:flex-start}.tag{max-width:105px;line-height:1.5}footer{gap:20px;line-height:1.8}#results{padding:20px}}
+.comparison-summary{margin-top:20px;padding:16px;background:#eef3e7;border-radius:7px;font-size:13px;line-height:1.7}.comparison-summary[data-state=disagreement]{background:#fff2dc;color:#795523}.evidence-note{font-size:11px;color:#73816c;line-height:1.7}.provider-cards{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0}.provider-card{padding:20px;border:1px solid #dce3d8;border-radius:8px;background:#fafbf8}.provider-card h3{font-size:12px;color:#557447;margin:0 0 12px}.provider-card p{font-size:14px;line-height:1.6;margin:0 0 8px}.provider-card p:last-child{font-size:11px;color:#788573;overflow-wrap:anywhere}.evidence-heading{font-size:13px;margin:12px 0}.dns-panel{border-top:1px solid #dce3d8;margin-top:24px;padding-top:12px}#reverse-dns{font-size:13px;overflow-wrap:anywhere}#map-provider{width:100%;font:inherit;font-size:12px;padding:10px;border:1px solid #dce3d8;border-radius:5px;background:#fafbf8;color:#183d38}#map-caption{min-height:38px}@media(max-width:650px){.provider-cards{grid-template-columns:1fr}}
 </style></head>
 <body>
   <header><a class="brand" href="#"><span class="brand-icon">◎</span> IP LOCATOR</a><span class="header-note"><i></i> A little more context for every connection</span></header>
   <main>
-    <section class="intro"><p class="eyebrow">THE INTERNET, ON THE MAP</p><h1>Every IP has<br>a <em>place to start.</em></h1><p class="description">Turn an IP address into a point on the map.<br>Explore its location, timezone, and the network behind it.</p></section>
+    <section class="intro"><p class="eyebrow">THE INTERNET, ON THE MAP</p><h1>Every IP has<br>a <em>place to start.</em></h1><p class="description">Turn an IP address into a point on the map.<br>Compare location estimates and explore the network behind it.</p></section>
     <section class="lookup" aria-label="IP lookup">
       <form id="lookup-form"><label for="ip">IP ADDRESS</label><div class="input-row"><span aria-hidden="true">◎</span><input id="ip" name="ip" placeholder="Enter an IPv4 or IPv6 address" autocomplete="off" spellcheck="false" required maxlength="53"><button id="submit" type="submit">Locate IP <span aria-hidden="true">↗</span></button></div></form>
       <div class="examples"><span>Try an example</span><button type="button" data-ip="8.8.8.8">8.8.8.8 ↗</button><button type="button" data-ip="1.1.1.1">1.1.1.1 ↗</button><span class="support">IPv4 + IPv6 supported</span></div>
       <p id="status" role="status" aria-live="polite">If the button does not respond, this viewer may be blocking JavaScript. Download the HTML and open it in your browser.</p>
     </section>
     <section id="empty" class="empty"><div class="globe" aria-hidden="true"><span>⌖</span></div><div><p class="eyebrow">READY WHEN YOU ARE</p><h2>A world of connections.</h2><p>Enter a public IP address above to discover where it connects.</p></div><span class="empty-number" aria-hidden="true">01 / EXPLORE</span></section>
-    <section id="results" hidden aria-label="Location results"><div class="result-heading"><div><p class="eyebrow">LOCATION FOUND</p><h2 id="location"></h2><p id="result-ip"></p></div><span class="tag">APPROXIMATE LOCATION</span></div><div class="result-grid"><div><dl id="details"></dl><a id="map-link" target="_blank" rel="noopener noreferrer">Explore on OpenStreetMap ↗</a></div><iframe id="map" title="Approximate IP location on OpenStreetMap" loading="lazy" referrerpolicy="no-referrer"></iframe></div></section>
+    <section id="results" hidden aria-label="Location results"><div class="result-heading"><div><p class="eyebrow">LOCATION FOUND</p><h2 id="location"></h2><p id="result-ip"></p></div><span class="tag">APPROXIMATE ESTIMATES</span></div><div id="comparison-summary" class="comparison-summary" role="status"></div><p class="evidence-note">Provider agreement is not proof of a device’s location. Estimates may reflect an ISP gateway, VPN, or outdated records.</p><div id="provider-cards" class="provider-cards"></div><div class="result-grid"><div><h3 class="evidence-heading">Network ownership &amp; selected estimate</h3><p class="evidence-note">Network operator names identify who runs the address, not where its user lives.</p><dl id="details"></dl><a id="map-link" target="_blank" rel="noopener noreferrer">Explore on OpenStreetMap ↗</a></div><div><label for="map-provider">MAP ESTIMATE</label><select id="map-provider" aria-label="Choose provider estimate for map"></select><p id="map-caption" class="evidence-note"></p><iframe id="map" title="Approximate IP location on OpenStreetMap" loading="lazy" referrerpolicy="no-referrer"></iframe></div></div><div class="dns-panel"><h3 class="evidence-heading">Reverse DNS · network clues</h3><p id="reverse-dns"></p><p class="evidence-note">Hostnames are assigned by network operators and may contain regional abbreviations. They can be stale or describe a router rather than the device. They do not confirm a city.</p><p id="checked-at" class="evidence-note"></p></div></section>
     <aside><span aria-hidden="true">ⓘ</span><p>A location, not an identity. IP geolocation is approximate and may reflect a VPN, proxy, or network provider. It does not reveal an exact street address.</p></aside>
   </main>
-  <footer><span>Developed by Justice Floyd</span><span>Location data by ipwho.is / ipapi.co · Maps © OpenStreetMap contributors</span></footer>
+  <footer><span>Developed by Justice Floyd</span><span>Data: ipwho.is / ipapi.co · DNS: Google · Maps © OpenStreetMap contributors</span></footer>
 <script>(() => {
+function normalizeEstimate(provider, data) {
+  if ((provider === 'ipwho.is' && data.success !== true) || data.error) throw new Error('No public location returned');
+  const { latitude, longitude } = data;
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) throw new Error('No valid coordinates returned');
+  return {
+    provider, status: 'available', ip: data.ip, type: data.type || data.version,
+    city: data.city || '', region: data.region || '', country: data.country_name || data.country || '',
+    countryCode: data.country_code || data.country || '', latitude, longitude,
+    timezone: typeof data.timezone === 'object' ? data.timezone?.id : data.timezone,
+    isp: data.connection?.isp || data.org, organization: data.connection?.org || data.org,
+    asn: String(data.connection?.asn || data.asn || '').replace(/^AS/i, ''),
+  };
+}
+
+function compareEstimates(estimates) {
+  const available = estimates.filter(item => item.status === 'available');
+  const named = available.filter(item => item.city && item.country);
+  const key = item => [item.city, item.region, item.country].map(value => String(value || '').trim().toLowerCase()).join('|');
+  const state = available.length < 2 ? 'limited' : named.length < 2 ? 'incomplete' : new Set(named.map(key)).size > 1 ? 'disagreement' : 'agreement';
+  let spreadKm = 0;
+  for (const a of available) for (const b of available) {
+    const rad = value => value * Math.PI / 180;
+    const h = Math.sin(rad(b.latitude - a.latitude) / 2) ** 2 + Math.cos(rad(a.latitude)) * Math.cos(rad(b.latitude)) * Math.sin(rad(b.longitude - a.longitude) / 2) ** 2;
+    spreadKm = Math.max(spreadKm, 6371 * 2 * Math.asin(Math.sqrt(Math.min(1, h))));
+  }
+  return { state, available: available.length, total: estimates.length, spreadKm: Math.round(spreadKm) };
+}
+
+function reverseName(ip) {
+  if (!ip.includes(':')) return ip.split('.').reverse().join('.') + '.in-addr.arpa';
+  const canonical = new URL(`http://[${ip}]/`).hostname.slice(1, -1);
+  const [left, right = ''] = canonical.split('::');
+  const a = left ? left.split(':') : [], b = right ? right.split(':') : [];
+  const groups = canonical.includes('::') ? [...a, ...Array(8 - a.length - b.length).fill('0'), ...b] : a;
+  return groups.map(group => group.padStart(4, '0')).join('').split('').reverse().join('.') + '.ip6.arpa';
+}
+
+async function collectEvidence(ip, fetcher = fetch) {
+  const request = async url => {
+    const response = await fetcher(url, { signal: AbortSignal.timeout(6500), credentials: 'omit' });
+    if (!response.ok) throw new Error(response.status === 429 ? 'Rate limit reached. Try again later.' : 'Provider unavailable.');
+    return response.json();
+  };
+  const providers = [['ipwho.is', `https://ipwho.is/${encodeURIComponent(ip)}`], ['ipapi.co', `https://ipapi.co/${encodeURIComponent(ip)}/json/`]];
+  const [estimates, reverseDns] = await Promise.all([
+    Promise.all(providers.map(async ([provider, url]) => {
+      try { return normalizeEstimate(provider, await request(url)); }
+      catch (error) { return { provider, status: error.message === 'No public location returned' ? 'no_location' : 'unavailable', message: ['No public location returned', 'Rate limit reached. Try again later.'].includes(error.message) ? error.message : 'Could not retrieve this provider’s estimate.' }; }
+    })),
+    (async () => {
+      try {
+        const data = await request(`https://dns.google/resolve?name=${encodeURIComponent(reverseName(ip))}&type=PTR`);
+        if (data.Status !== 0 && data.Status !== 3) return { status: 'unavailable', hostnames: [] };
+        const hostnames = (data.Answer || []).filter(answer => answer.type === 12 && typeof answer.data === 'string').map(answer => answer.data.replace(/\.$/, ''));
+        return { status: hostnames.length ? 'available' : 'not_found', hostnames };
+      } catch { return { status: 'unavailable', hostnames: [] }; }
+    })(),
+  ]);
+  const primary = estimates.find(item => item.status === 'available');
+  if (!primary) {
+    const error = new Error(estimates.some(item => item.status === 'no_location') ? 'No public geolocation is available for this address.' : 'Location providers are unavailable. Check your connection or try again shortly.');
+    error.status = estimates.some(item => item.status === 'no_location') ? 422 : 502;
+    throw error;
+  }
+  return { ...primary, estimates, comparison: compareEstimates(estimates), reverseDns, checkedAt: new Date().toISOString() };
+}
+
 // Shared by the bundled browser page and Node tests. No dependency on a local API.
 function normalizeAddress(value) {
   let ip = value.trim();
@@ -50,16 +118,9 @@ async function lookupAddress(value, { fetcher = fetch, protocol = location.proto
     }
   }
   try {
-    const response = await fetcher(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, { signal: AbortSignal.timeout(12000), credentials: 'omit' });
-    if (!response.ok) throw new Error(response.status === 429 ? 'The location provider reached its request limit. Please try again later.' : 'The location provider is unavailable. Please try again later.');
-    const data = await response.json();
-    if (data.error) throw new Error('This address has no public geolocation. Try a public IP address.');
-    if (!Number.isFinite(data.latitude) || !Number.isFinite(data.longitude)) throw new Error('No coordinates are available for this address.');
-    return { ip: data.ip, type: data.version, city: data.city, region: data.region, country: data.country_name,
-      latitude: data.latitude, longitude: data.longitude, timezone: data.timezone, isp: data.org,
-      organization: data.org, asn: data.asn?.replace(/^AS/, ''), provider: 'ipapi.co' };
+    return await collectEvidence(ip, fetcher);
   } catch (error) {
-    if (error instanceof TypeError || error.name === 'TimeoutError') throw new Error('This viewer could not connect to the location service. Open the downloaded HTML in a browser or use a hosted copy. If the viewer asks for network access, allow ipapi.co.');
+    if (error.status === 502) throw new Error('This viewer could not connect to the location providers. Check your connection and allow ipwho.is, ipapi.co, and dns.google if prompted.');
     throw error;
   }
 }
@@ -70,8 +131,32 @@ const submit = document.querySelector('#submit');
 const status = document.querySelector('#status');
 const results = document.querySelector('#results');
 const details = document.querySelector('#details');
+const mapProvider = document.querySelector('#map-provider');
+let activeEstimates = [];
 let busy = false;
 status.textContent = '';
+
+function showEstimate(data) {
+  details.replaceChildren();
+  for (const [label, value] of [['Estimated region', data.region], ['Estimated country', data.country], ['Estimated coordinates', `${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)}`], ['Timezone', data.timezone], ['Network operator / ISP', data.isp], ['Network owner / ASN', data.asn ? `AS${data.asn} · ${data.organization || ''}` : data.organization]]) {
+    const item = document.createElement('div');
+    const dt = document.createElement('dt');
+    const dd = document.createElement('dd');
+    dt.textContent = label;
+    dd.textContent = value || 'Unavailable';
+    item.append(dt, dd);
+    details.append(item);
+  }
+  const lat = data.latitude, lon = data.longitude;
+  const bbox = [Math.max(-180, lon - 0.12), Math.max(-90, lat - 0.08), Math.min(180, lon + 0.12), Math.min(90, lat + 0.08)].join(',');
+  document.querySelector('#map').src = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lon}`;
+  document.querySelector('#map-link').href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=11/${lat}/${lon}`;
+  document.querySelector('#map-caption').textContent = `${data.provider || 'Provider'} estimate: ${[data.city, data.region, data.country].filter(Boolean).join(', ')}. This marker is not an exact device location.`;
+}
+mapProvider.addEventListener('change', () => {
+  const estimate = activeEstimates.find(item => item.provider === mapProvider.value);
+  if (estimate) showEstimate(estimate);
+});
 
 form.addEventListener('submit', async event => {
   event.preventDefault();
@@ -86,22 +171,41 @@ form.addEventListener('submit', async event => {
   status.classList.remove('error');
   try {
     const data = await lookupAddress(input.value);
-    document.querySelector('#location').textContent = [data.city, data.country].filter(Boolean).join(', ') || 'Location found';
+    const estimates = data.estimates || [{ ...data, provider: data.provider || 'Location provider', status: 'available' }];
+    const comparison = data.comparison || compareEstimates(estimates);
+    document.querySelector('#location').textContent = comparison.state === 'disagreement' ? 'Location estimates differ' : [data.city, data.country].filter(Boolean).join(', ') || 'Location estimates';
     document.querySelector('#result-ip').textContent = `${data.ip} · ${data.type}`;
-    details.replaceChildren();
-    for (const [label, value] of [['Region', data.region], ['Country', data.country], ['Coordinates', `${data.latitude.toFixed(4)}, ${data.longitude.toFixed(4)}`], ['Timezone', data.timezone], ['Internet provider', data.isp], ['Network', data.asn ? `AS${data.asn} · ${data.organization || ''}` : data.organization]]) {
-      const item = document.createElement('div');
-      const dt = document.createElement('dt');
-      const dd = document.createElement('dd');
-      dt.textContent = label;
-      dd.textContent = value || 'Unavailable';
-      item.append(dt, dd);
-      details.append(item);
+    const summary = document.querySelector('#comparison-summary');
+    const summaries = { disagreement: 'Providers disagree on the city or region. The actual device location is unresolved.', agreement: 'Both providers report the same city and region. This does not verify the device’s location.', limited: 'Only one provider returned an estimate. Cross-checking is unavailable.', incomplete: 'Providers returned incomplete city details. City agreement cannot be determined.' };
+    summary.textContent = summaries[comparison.state];
+    if (comparison.available > 1) summary.textContent += ` Estimate markers are about ${comparison.spreadKm} km apart. This is not an accuracy radius.`;
+    summary.dataset.state = comparison.state;
+    const cards = document.querySelector('#provider-cards');
+    cards.replaceChildren();
+    mapProvider.replaceChildren();
+    activeEstimates = estimates.filter(item => item.status === 'available');
+    for (const estimate of estimates) {
+      const card = document.createElement('article');
+      card.className = 'provider-card';
+      const heading = document.createElement('h3');
+      const location = document.createElement('p');
+      const note = document.createElement('p');
+      heading.textContent = estimate.provider;
+      location.textContent = estimate.status === 'available' ? [estimate.city || 'City unavailable', estimate.region, estimate.country].filter(Boolean).join(', ') : 'Estimate unavailable';
+      note.textContent = estimate.status === 'available' ? `${estimate.latitude.toFixed(4)}, ${estimate.longitude.toFixed(4)} · approximate` : estimate.message;
+      card.append(heading, location, note);
+      cards.append(card);
+      if (estimate.status === 'available') {
+        const option = document.createElement('option');
+        option.value = estimate.provider;
+        option.textContent = `${estimate.provider} · ${estimate.city || 'City unavailable'}`;
+        mapProvider.append(option);
+      }
     }
-    const lat = data.latitude, lon = data.longitude;
-    const bbox = [Math.max(-180, lon - 0.12), Math.max(-90, lat - 0.08), Math.min(180, lon + 0.12), Math.min(90, lat + 0.08)].join(',');
-    document.querySelector('#map').src = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(bbox)}&layer=mapnik&marker=${lat},${lon}`;
-    document.querySelector('#map-link').href = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=11/${lat}/${lon}`;
+    showEstimate(activeEstimates[0]);
+    const dns = data.reverseDns;
+    document.querySelector('#reverse-dns').textContent = dns?.status === 'available' ? dns.hostnames.join(' · ') : dns?.status === 'not_found' ? 'No reverse-DNS hostname was returned.' : 'Reverse DNS is unavailable. The location estimates above are still usable.';
+    document.querySelector('#checked-at').textContent = data.checkedAt ? `Providers checked ${new Date(data.checkedAt).toLocaleString()}. This is the lookup time, not the age of their database records.` : '';
     results.hidden = false;
     status.textContent = '';
   } catch (error) {

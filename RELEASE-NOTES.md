@@ -1,5 +1,15 @@
 Portable IP Locator for Windows 10/11 x64. Download **IP-Locator.exe** below, then double-click it. No installer, Node.js installation, or administrator access is required.
 
+Version 1.1.0 adds a location evidence comparison:
+
+- Side-by-side city, region, country, and coordinate estimates from ipwho.is and ipapi.co.
+- Clear disagreement, agreement, incomplete-data, and single-provider states. Agreement does not verify a device location.
+- A map selector for inspecting each provider's estimate and the approximate separation between their markers. This separation is not an accuracy radius.
+- Reverse-DNS hostname clues through Google Public DNS, clearly separated from geolocation and network ownership.
+- Partial results when a provider or DNS lookup is unavailable, and the time providers were checked.
+
+The app cannot reliably resolve a person's actual city from an IP address alone. ISP gateways, VPNs, stale databases, provider limits, and missing DNS records can affect results. No location is inferred from hostname abbreviations.
+
 Version 1.0.3 adds “Developed by Justice Floyd” to the application footer.
 
 Version 1.0.1 fixes the unstyled page and unresponsive Locate IP button caused by Windows line endings invalidating the page's security hashes. Browser regression checks now cover Windows line endings and the packaged executable.
