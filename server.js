@@ -1,0 +1,91 @@
+import http from 'node:http';
+import { isIP } from 'node:net';
+import { readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+
+export function parseAddress(value) {
+  const address = value.trim();
+  if (isIP(address)) return address;
+  const match = address.match(/^(?:\[([^\]]+)\]|(\d{1,3}(?:\.\d{1,3}){3})):(\d{1,5})$/);
+  if (!match || Number(match[3]) > 65535) return '';
+  const ip = match[1] || match[2];
+  return isIP(ip) ? ip : '';
+}
+
+export function createServer({ fetcher = fetch, page } = {}) {
+  const files = { '/': ['index.html', 'text/html'], '/app.js': ['app.js', 'text/javascript'], '/style.css': ['style.css', 'text/css'] };
+  return http.createServer(async (req, res) => {
+    const send = (status, body) => {
+      res.writeHead(status, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+      res.end(JSON.stringify(body));
+    };
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'no-referrer');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; frame-src https://www.openstreetmap.org; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'");
+    if (req.method !== 'GET') return send(405, { error: 'Only GET requests are supported.' });
+    const url = new URL(req.url, 'http://localhost');
+    if (url.pathname === '/download/windows') {
+      try {
+        const content = await readFile(new URL('./downloads/IP-Locator.exe', import.meta.url));
+        res.writeHead(200, {
+          'Content-Type': 'application/octet-stream',
+          'Content-Disposition': 'attachment; filename="IP-Locator.exe"',
+          'Content-Length': content.length,
+          'Cache-Control': 'no-cache',
+        });
+        res.end(content);
+      } catch { send(503, { error: 'Windows download not built. Run npm run build:windows.' }); }
+      return;
+    }
+    if (url.pathname === '/download') {
+      try {
+        const content = page ? Buffer.from(page) : await readFile(new URL('./downloads/IP-Locator.html', import.meta.url));
+        res.writeHead(200, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Content-Disposition': 'attachment; filename="IP-Locator.html"',
+          'Content-Length': content.length,
+          'Cache-Control': 'no-cache',
+        });
+        res.end(content);
+      } catch { send(503, { error: 'Download not built. Run npm run build.' }); }
+      return;
+    }
+    if (url.pathname === '/api/lookup') {
+      const ip = parseAddress(url.searchParams.get('ip') || '');
+      if (!isIP(ip)) return send(400, { error: 'Enter a valid IPv4 or IPv6 address.' });
+      try {
+        const upstream = await fetcher(`https://ipwho.is/${encodeURIComponent(ip)}`, { signal: AbortSignal.timeout(10000) });
+        if (!upstream.ok) throw new Error('Provider unavailable');
+        const data = await upstream.json();
+        if (!data.success) return send(422, { error: 'This address has no public geolocation. Try a public IP address.' });
+        if (!Number.isFinite(data.latitude) || !Number.isFinite(data.longitude) || Math.abs(data.latitude) > 90 || Math.abs(data.longitude) > 180) throw new Error('Invalid coordinates');
+        send(200, {
+          ip: data.ip, type: data.type, city: data.city, region: data.region,
+          country: data.country, countryCode: data.country_code,
+          latitude: data.latitude, longitude: data.longitude,
+          timezone: data.timezone?.id, isp: data.connection?.isp,
+          organization: data.connection?.org, asn: data.connection?.asn,
+        });
+      } catch {
+        send(502, { error: 'The location service is unavailable. Please try again shortly.' });
+      }
+      return;
+    }
+    const file = files[url.pathname];
+    if (!file) return send(404, { error: 'Not found.' });
+    try {
+      if (page && file[0] !== 'index.html') return send(404, { error: 'Not found.' });
+      const content = page ? Buffer.from(page) : await readFile(new URL(`./public/${file[0]}`, import.meta.url));
+      if (file[0] === 'index.html') {
+        const html = content.toString();
+        const hash = text => `'sha256-${createHash('sha256').update(text).digest('base64')}'`;
+        const style = html.match(/<style>([\s\S]*?)<\/style>/)?.[1] || '';
+        const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1] || '';
+        res.setHeader('Content-Security-Policy', `default-src 'self'; connect-src 'self' https://ipapi.co; frame-src https://www.openstreetmap.org; style-src 'self' ${hash(style)}; script-src 'self' ${hash(script)}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`);
+      }
+      res.writeHead(200, { 'Content-Type': `${file[1]}; charset=utf-8` });
+      res.end(content);
+    } catch { send(500, { error: 'Unable to load the application.' }); }
+  });
+}
+

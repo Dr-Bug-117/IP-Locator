@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Find the approximate location and network behind a public IP address."><title>IP Locator — Find your coordinates</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+  <header><a class="brand" href="#"><span class="brand-icon">◎</span> IP LOCATOR</a><span class="header-note"><i></i> A little more context for every connection</span></header>
+  <main>
+    <section class="intro"><p class="eyebrow">THE INTERNET, ON THE MAP</p><h1>Every IP has<br>a <em>place to start.</em></h1><p class="description">Turn an IP address into a point on the map.<br>Explore its location, timezone, and the network behind it.</p></section>
+    <section class="lookup" aria-label="IP lookup">
+      <form id="lookup-form"><label for="ip">IP ADDRESS</label><div class="input-row"><span aria-hidden="true">◎</span><input id="ip" name="ip" placeholder="Enter an IPv4 or IPv6 address" autocomplete="off" spellcheck="false" required maxlength="45"><button id="submit" type="submit">Locate IP <span aria-hidden="true">↗</span></button></div></form>
+      <div class="examples"><span>Try an example</span><button type="button" data-ip="8.8.8.8">8.8.8.8 ↗</button><button type="button" data-ip="1.1.1.1">1.1.1.1 ↗</button><span class="support">IPv4 + IPv6 supported</span></div>
+      <p id="status" role="status" aria-live="polite">If the button does not respond, this viewer may be blocking JavaScript. Download the HTML and open it in your browser.</p>
+    </section>
+    <section id="empty" class="empty"><div class="globe" aria-hidden="true"><span>⌖</span></div><div><p class="eyebrow">READY WHEN YOU ARE</p><h2>A world of connections.</h2><p>Enter a public IP address above to discover where it connects.</p></div><span class="empty-number" aria-hidden="true">01 / EXPLORE</span></section>
+    <section id="results" hidden aria-label="Location results"><div class="result-heading"><div><p class="eyebrow">LOCATION FOUND</p><h2 id="location"></h2><p id="result-ip"></p></div><span class="tag">APPROXIMATE LOCATION</span></div><div class="result-grid"><div><dl id="details"></dl><a id="map-link" target="_blank" rel="noopener noreferrer">Explore on OpenStreetMap ↗</a></div><iframe id="map" title="Approximate IP location on OpenStreetMap" loading="lazy" referrerpolicy="no-referrer"></iframe></div></section>
+    <aside><span aria-hidden="true">ⓘ</span><p>A location, not an identity. IP geolocation is approximate and may reflect a VPN, proxy, or network provider. It does not reveal an exact street address.</p></aside>
+  </main>
+  <footer><span>Built for the curious.</span><span>Location data by ipwho.is / ipapi.co · Maps © OpenStreetMap contributors</span></footer>
+</body></html>

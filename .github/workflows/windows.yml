@@ -1,0 +1,69 @@
+name: Build portable Windows application
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build:windows
+      - name: Smoke test the actual executable
+        shell: pwsh
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP 'ip-locator.log'
+          $errLog = Join-Path $env:RUNNER_TEMP 'ip-locator-error.log'
+          $app = Start-Process -FilePath './downloads/IP-Locator.exe' -ArgumentList '--no-open' -PassThru -RedirectStandardOutput $log -RedirectStandardError $errLog
+          try {
+            $url = $null
+            for ($attempt = 0; $attempt -lt 30; $attempt++) {
+              if ($app.HasExited) { throw "App exited: $(Get-Content $errLog -Raw)" }
+              if (Test-Path $log) {
+                $text = Get-Content $log -Raw
+                if ($text -match 'http://127\.0\.0\.1:\d+/') { $url = $Matches[0]; break }
+              }
+              Start-Sleep -Milliseconds 500
+            }
+            if (!$url) { throw 'App did not start within 15 seconds.' }
+            $page = Invoke-WebRequest -Uri $url
+            if ($page.StatusCode -ne 200 -or $page.Content -notmatch 'lookup-form' -or $page.Content -notmatch '<style>') { throw 'App page failed.' }
+            $data = Invoke-RestMethod -Uri ($url + 'api/lookup?ip=8.8.8.8') -TimeoutSec 20
+            if ($data.ip -ne '8.8.8.8' -or $null -eq $data.latitude) { throw 'Live lookup failed.' }
+          } finally {
+            if (!$app.HasExited) { Stop-Process -Id $app.Id }
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IP-Locator-Windows-x64
+          path: |
+            downloads/IP-Locator.exe
+            downloads/IP-Locator.exe.sha256
+            downloads/WINDOWS-README.txt
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: windows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: IP-Locator-Windows-x64
+          path: release-files
+      - name: Publish tested Windows download
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$RELEASE_TAG" release-files/IP-Locator.exe release-files/IP-Locator.exe.sha256 release-files/WINDOWS-README.txt --verify-tag --title "IP Locator $RELEASE_TAG" --notes-file RELEASE-NOTES.md
