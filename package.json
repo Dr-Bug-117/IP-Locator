@@ -1,6 +1,6 @@
 {
   "name": "ip-locator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "engines": {
@@ -14,10 +14,12 @@
     "prestart": "npm run build",
     "predev": "npm run build",
     "build:windows": "npm run build && node scripts/build-windows.js",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "test:browser": "node scripts/check-browser.js"
   },
   "devDependencies": {
     "@yao-pkg/pkg": "6.23.0",
-    "esbuild": "0.28.2"
+    "esbuild": "0.28.2",
+    "playwright": "1.64.1"
   }
 }

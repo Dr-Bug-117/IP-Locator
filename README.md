@@ -14,6 +14,8 @@ Upload the executable bytes to your database or file storage. Serve them with `C
 
 The Windows build workflow runs the actual executable on a Windows runner and publishes a downloadable Actions artifact after the checks pass. It runs when pushed to `main`, or manually through GitHub Actions. This workflow has not been run by the local Linux build.
 
+`npm run test:browser` verifies the styled page and lookup interaction in Chromium with simulated location responses, covering LF, Windows CRLF, and bare CR files. Install the test browser with `npx playwright install chromium` first, or set `BROWSER_EXECUTABLE_PATH` to an installed Chromium. The Windows workflow also runs `npm run test:browser -- --exe` against the packaged executable. Live provider verification is a separate Windows workflow check.
+
 ## Develop and run
 
 Requires Node.js 24.5 or newer. No dependencies or API keys are required.

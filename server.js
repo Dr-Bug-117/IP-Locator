@@ -78,7 +78,8 @@ export function createServer({ fetcher = fetch, page } = {}) {
       const content = page ? Buffer.from(page) : await readFile(new URL(`./public/${file[0]}`, import.meta.url));
       if (file[0] === 'index.html') {
         const html = content.toString();
-        const hash = text => `'sha256-${createHash('sha256').update(text).digest('base64')}'`;
+        // HTML parsing normalizes Windows CRLF and bare CR before checking CSP hashes.
+        const hash = text => `'sha256-${createHash('sha256').update(text.replace(/\r\n?/g, '\n')).digest('base64')}'`;
         const style = html.match(/<style>([\s\S]*?)<\/style>/)?.[1] || '';
         const script = html.match(/<script>([\s\S]*?)<\/script>/)?.[1] || '';
         res.setHeader('Content-Security-Policy', `default-src 'self'; connect-src 'self' https://ipapi.co; frame-src https://www.openstreetmap.org; style-src 'self' ${hash(style)}; script-src 'self' ${hash(script)}; object-src 'none'; base-uri 'none'; frame-ancestors 'none'`);

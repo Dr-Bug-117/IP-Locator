@@ -18,6 +18,9 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build:windows
+      - run: npx playwright install chromium
+      - name: Verify design and lookup button in the Windows executable
+        run: npm run test:browser -- --exe
       - name: Smoke test the actual executable
         shell: pwsh
         run: |
