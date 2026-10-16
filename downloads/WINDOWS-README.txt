@@ -1,5 +1,14 @@
 IP LOCATOR - PORTABLE WINDOWS APPLICATION
 
+The footer shows your installed version and links to the official Releases page.
+Use Copy buttons to copy addresses, ranges, and returned values without opening
+them as websites. Public registry/routing links open official information services.
+Network ranges (CIDR) are blocks of addresses, not web links.
+
+After a lookup finishes, Print / Save PDF opens a readable report in your browser's
+print dialog. Choose Save as PDF if offered. Reports include the app version,
+Developed by Justice Floyd credit, lookup time, source states and limitations.
+
 Requirements: Windows 10/11, 64-bit (x64), a web browser, and Internet access.
 
 1. Download IP-Locator.exe to a folder you can access.

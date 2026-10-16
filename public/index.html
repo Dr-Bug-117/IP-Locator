@@ -4,6 +4,7 @@
 .comparison-summary{margin-top:20px;padding:16px;background:#eef3e7;border-radius:7px;font-size:13px;line-height:1.7}.comparison-summary[data-state=disagreement]{background:#fff2dc;color:#795523}.evidence-note{font-size:11px;color:#73816c;line-height:1.7}.provider-cards{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0}.provider-card{padding:20px;border:1px solid #dce3d8;border-radius:8px;background:#fafbf8}.provider-card h3{font-size:12px;color:#557447;margin:0 0 12px}.provider-card p{font-size:14px;line-height:1.6;margin:0 0 8px}.provider-card p:last-child{font-size:11px;color:#788573;overflow-wrap:anywhere}.evidence-heading{font-size:13px;margin:12px 0}.dns-panel{border-top:1px solid #dce3d8;margin-top:24px;padding-top:12px}#reverse-dns{font-size:13px;overflow-wrap:anywhere}#map-provider{width:100%;font:inherit;font-size:12px;padding:10px;border:1px solid #dce3d8;border-radius:5px;background:#fafbf8;color:#183d38}#map-caption{min-height:38px}@media(max-width:650px){.provider-cards{grid-template-columns:1fr}}
 #intelligence{margin-top:28px;background:#fff;border:1px solid #dce3d8;border-radius:10px;padding:28px}#intelligence .result-heading h2{font-size:28px}#export-report{border:1px solid #cbd6c6;background:#eef3e7;color:#254d40;font-size:12px;padding:11px 14px;border-radius:5px}.intel-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.intel-block{border-top:1px solid #dce3d8;padding:20px 0 8px;margin-top:15px}.intel-block h3,.intel-block summary{font-size:14px;font-weight:700;color:#254d40}.intel-block summary{cursor:pointer}.intel-block h4{font-size:12px;margin:20px 0 10px}.intel-block p{font-size:12px;line-height:1.7;overflow-wrap:anywhere}#intelligence-status{font-size:12px;line-height:1.7;color:#6d7e65}.indicator-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.indicator-grid>div{border:1px solid #dce3d8;border-radius:6px;padding:14px;font-size:11px;display:flex;flex-direction:column;gap:9px}.indicator-grid strong{font-size:11px;color:#58734c}.reputation-links{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;margin:16px 0}#raw-evidence{max-height:400px;overflow:auto;padding:16px;background:#f6f7f2;font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere}.identity-note{color:#687e60}#registration-events p,#registration-contacts p,#registration-notices p{font-size:11px}#registration-contacts{max-height:260px;overflow:auto}@media(max-width:650px){#intelligence{padding:20px}.intel-grid{grid-template-columns:1fr}.indicator-grid{grid-template-columns:1fr 1fr}#intelligence .result-heading{flex-wrap:wrap}}
 .context-panel{margin:20px 0;font-size:12px}.context-panel summary{cursor:pointer;color:#557447}#address-facts{grid-template-columns:1fr}#address-facts dd{font-family:monospace;font-size:11px;word-break:break-all}
+.copy-button{display:inline-block;border:1px solid #dce3d8;border-radius:4px;background:#f6f7f2;color:#557447;font-size:9px;padding:3px 7px;margin-left:7px;vertical-align:middle}.copy-button:hover{background:#e6eddd}.report-actions{display:flex;flex-wrap:wrap;gap:8px}#print-report{border:1px solid #cbd6c6;background:#eef3e7;color:#254d40;font-size:12px;padding:11px 14px;border-radius:5px}#copy-status textarea{display:block;width:100%;margin-top:8px;min-height:50px}footer{gap:20px;flex-wrap:wrap}#printable-report h1{font-size:25px;letter-spacing:0;line-height:1.3}#printable-report h2{font-size:16px}#printable-report p{font-size:11px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}#printable-report section{break-inside:avoid;margin:20px 0}@media print{body.printing-report{background:white;color:#111}body.printing-report>:not(#printable-report){display:none!important}body.printing-report #printable-report{display:block!important;padding:10mm;font-family:Arial,sans-serif}body.printing-report #printable-report h1,body.printing-report #printable-report h2{color:#111}body.printing-report #printable-report a{color:#111}@page{size:auto;margin:12mm}}
 </style></head>
 <body>
   <header><a class="brand" href="#"><span class="brand-icon">◎</span> IP LOCATOR</a><span class="header-note"><i></i> A little more context for every connection</span></header>
@@ -17,15 +18,15 @@
     <section id="empty" class="empty"><div class="globe" aria-hidden="true"><span>⌖</span></div><div><p class="eyebrow">READY WHEN YOU ARE</p><h2>A world of connections.</h2><p>Enter a public IP address above to discover where it connects.</p></div><span class="empty-number" aria-hidden="true">01 / EXPLORE</span></section>
     <section id="results" hidden aria-label="Location results"><div class="result-heading"><div><p class="eyebrow">LOCATION FOUND</p><h2 id="location"></h2><p id="result-ip"></p></div><span class="tag">APPROXIMATE ESTIMATES</span></div><div id="comparison-summary" class="comparison-summary" role="status"></div><p class="evidence-note">Provider agreement is not proof of a device’s location. Estimates may reflect an ISP gateway, VPN, or outdated records.</p><div id="provider-cards" class="provider-cards"></div><div class="result-grid"><div><h3 class="evidence-heading">Network ownership &amp; selected estimate</h3><p class="evidence-note">Network operator names identify who runs the address, not where its user lives.</p><dl id="details"></dl><details class="context-panel"><summary>Additional location &amp; country context</summary><p class="evidence-note">Country-level context and postal estimates describe the selected provider’s region, not the user.</p><dl id="context-facts"></dl></details><a id="map-link" target="_blank" rel="noopener noreferrer">Explore on OpenStreetMap ↗</a></div><div><label for="map-provider">MAP ESTIMATE</label><select id="map-provider" aria-label="Choose provider estimate for map"></select><p id="map-caption" class="evidence-note"></p><iframe id="map" title="Approximate IP location on OpenStreetMap" loading="lazy" referrerpolicy="no-referrer"></iframe></div></div><div class="dns-panel"><h3 class="evidence-heading">Reverse DNS · network clues</h3><p id="reverse-dns"></p><p class="evidence-note">Hostnames are assigned by network operators and may contain regional abbreviations. They can be stale or describe a router rather than the device. They do not confirm a city.</p><p id="checked-at" class="evidence-note"></p></div></section>
     <section id="intelligence" hidden aria-label="Public IP intelligence">
-      <div class="result-heading"><div><p class="eyebrow">LOOK BEYOND THE MAP</p><h2>Public network details</h2></div><button id="export-report" type="button" disabled>Download JSON report ↓</button></div>
+      <div class="result-heading"><div><p class="eyebrow">LOOK BEYOND THE MAP</p><h2>Public network details</h2></div><div class="report-actions"><button id="print-report" type="button" disabled>Print / Save PDF</button><button id="export-report" type="button" disabled>Download JSON report ↓</button></div></div>
       <p class="evidence-note">Public records and provider estimates describe a network. They do not identify the person or device using it.</p>
-      <p id="intelligence-status" role="status" aria-live="polite"></p>
+      <div id="record-links" class="reputation-links"></div><p id="copy-status" class="evidence-note" role="status" aria-live="polite"></p><p id="intelligence-status" role="status" aria-live="polite"></p>
       <div class="intel-grid">
         <section class="intel-block"><h3>Address facts</h3><dl id="address-facts"></dl></section>
         <section class="intel-block"><h3>Network &amp; connection classification</h3><p id="network-source" class="evidence-note"></p><dl id="network-facts"></dl></section>
       </div>
       <section class="intel-block"><h3>Provider-reported indicators</h3><p class="evidence-note">Yes / No reflects this provider’s current response, not a guarantee. Unknown means no result was provided. Risk flags and scores are not proof of abuse; VPN and Tor use alone do not imply wrongdoing.</p><div id="network-indicators" class="indicator-grid"></div></section>
-      <section class="intel-block"><h3>Observed Internet routing</h3><p id="routing-source" class="evidence-note"></p><dl id="routing-facts"></dl><p class="evidence-note">BGP origin and prefix are observations from routing collectors. They do not reveal a device’s local network, identify its owner, or guarantee global reachability.</p></section>
+      <section class="intel-block"><h3>Observed Internet routing</h3><p id="routing-source" class="evidence-note"></p><dl id="routing-facts"></dl><p id="cidr-explanation" class="evidence-note"></p><p class="evidence-note">A network range is not a website. The slash number is a CIDR prefix length, not a web-page path. Routing network IDs (ASNs) identify networks announcing the range. These are observations from routing collectors. They do not reveal a device’s local network, identify its owner, or guarantee global reachability.</p></section>
       <details class="intel-block" open><summary>Public registration · RDAP</summary><p id="registration-source" class="evidence-note"></p><dl id="registration-facts"></dl><div id="registration-events"></div><h4>Published registry contacts</h4><p class="evidence-note">These are registration or network-operation contacts, not the device owner’s account or personal identity. Redacted contacts may be absent.</p><div id="registration-contacts"></div><div id="registration-notices"></div></details>
       <details class="intel-block"><summary>Published abuse-reporting contact</summary><p class="evidence-note">A contact for reporting network abuse; it does not mean this IP has committed abuse.</p><dl id="abuse-contact"></dl></details>
       <section class="intel-block"><h3>Reputation research</h3><p class="evidence-note">Detailed report histories usually need a provider account or API plan. The app does not claim a clean reputation when those reports have not been checked. These links open the selected IP on external services.</p><div id="reputation-links" class="reputation-links"></div></section>
@@ -34,8 +35,49 @@
     </section>
     <aside><span aria-hidden="true">ⓘ</span><p>A location, not an identity. IP geolocation is approximate and may reflect a VPN, proxy, or network provider. It does not reveal an exact street address.</p></aside>
   </main>
-  <footer><span>Developed by Justice Floyd</span><span>Data: ipwho.is / ipapi.co / ipapi.is / RDAP / RIPEstat · DNS: Google · Maps © OpenStreetMap contributors</span></footer>
+  <section id="printable-report" hidden aria-label="Printable lookup report"></section>
+  <footer><span>Developed by Justice Floyd · <span id="app-version">v1.3.0</span> · <a href="https://github.com/Dr-Bug-117/IP-Locator/releases" target="_blank" rel="noopener noreferrer">Official releases ↗</a></span><span>Data: ipwho.is / ipapi.co / ipapi.is / RDAP / RIPEstat · DNS: Google · Maps © OpenStreetMap contributors</span></footer>
 <script>(() => {
+const APP_VERSION = "1.3.0";
+
+function describeCidr(value) {
+  try {
+    if (typeof value !== 'string' || !/^[0-9a-fA-F:.]+\/\d{1,3}$/.test(value)) return null;
+    const [ip, length] = value.split('/');
+    if (!ip.includes(':') && (!/^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip) || ip.split('.').some(part => Number(part) > 255))) return null;
+    const address = addressDetails(ip);
+    const prefix = Number(length);
+    if (prefix > address.bits) return null;
+    const hostBits = BigInt(address.bits - prefix);
+    const start = (BigInt(address.decimal) >> hostBits) << hostBits;
+    const count = 1n << hostBits;
+    const format = number => address.bits === 32
+      ? [24n, 16n, 8n, 0n].map(shift => String((number >> shift) & 255n)).join('.')
+      : new URL(`http://[${number.toString(16).padStart(32, '0').match(/.{4}/g).join(':')}]/`).hostname.slice(1, -1);
+    return { start: format(start), end: format(start + count - 1n), count: count.toString(), version: address.version };
+  } catch { return null; }
+}
+
+function printableSections(report) {
+  const geo = report.geolocation;
+  const intel = report.intelligence;
+  const value = item => item === undefined || item === null || item === '' ? 'Unknown / not provided' : String(item);
+  const pairs = fields => Object.entries(fields || {}).map(([key, item]) => `${key}: ${value(item)}`);
+  return [
+    { title: 'Lookup summary', lines: [`IP: ${report.queriedIp}`, `App version: ${report.appVersion || 'Unknown'}`, `Lookup started (UTC): ${report.checkedAt}`, 'Developed by Justice Floyd', report.limitations] },
+    { title: 'Location estimates', lines: geo ? [...(geo.estimates || [geo]).map(item => `${item.provider || 'Provider'} · ${item.status || 'available'} · ${[item.city, item.region, item.country].filter(Boolean).join(', ') || item.message || 'No city details'}${item.latitude !== undefined ? ` · ${item.latitude}, ${item.longitude}` : ''}`), `Comparison: ${geo.comparison?.state || 'Not available'}`, `Sources checked (UTC): ${value(geo.checkedAt)}`, 'Provider agreement does not verify device location.'] : [report.geolocationError || 'Location data unavailable'] },
+    { title: 'Address facts', lines: pairs(intel?.address || addressDetails(report.queriedIp)) },
+    { title: 'Network classification', lines: [`${intel?.network?.source || 'Network source'} · ${intel?.network?.status || 'unavailable'}`, ...pairs(intel?.network?.network)] },
+    { title: 'Provider-reported indicators', lines: [...Object.entries(intel?.network?.indicators || {}).map(([key, flag]) => `${key.replace(/^is_/, '').replace(/_/g, ' ')}: ${flag === true ? 'Yes (provider-reported)' : flag === false ? 'No (provider-reported)' : 'Unknown'}`), 'Missing checks are unknown, not negative findings. Scores and flags do not prove abuse.'] },
+    { title: 'Observed Internet routing', lines: [`${intel?.routing?.source || 'RIPEstat'} · ${intel?.routing?.status || 'unavailable'}`, `Network range (CIDR — not a website): ${value(intel?.routing?.prefix)}`, `Routing network IDs (origin ASNs): ${intel?.routing?.originAsns?.map(asn => `AS${asn}`).join(', ') || 'Unknown'}`, 'Routes describe network announcements, not device identity or location.'] },
+    { title: 'Public registration', lines: [`${intel?.registration?.source || 'RDAP'} · ${intel?.registration?.status || 'unavailable'}`, ...pairs(intel?.registration?.fields), ...(intel?.registration?.events || []).map(event => `${event.action}: ${event.date}`), 'Registry dates describe records, not device activity or geolocation freshness.'] },
+    { title: 'Published registry contacts', lines: [(intel?.registration?.contacts || []).map(contact => [contact.roles?.join(', '), contact.name, contact.organization, contact.handle, contact.email, contact.phone].filter(Boolean).join(' · ')).join('\n') || 'No public contacts returned.', 'These are registry/network-operation contacts, not the user of the device.'] },
+    { title: 'Published abuse-reporting contact', lines: pairs(intel?.network?.abuse) },
+    { title: 'Reverse DNS', lines: [geo?.reverseDns?.hostnames?.join(', ') || 'No hostname available', 'Hostnames are operator-assigned clues, not verified device identities.'] },
+    { title: 'Sources and limitations', lines: [`Extra sources checked (UTC): ${value(intel?.checkedAt)}`, 'Check time is not database freshness. Unavailable sources are not clean results.', 'Detailed AbuseIPDB, VirusTotal, and Talos report histories were not automatically retrieved.', 'No device OS, Windows username, accounts, files, MAC address, or exact street address is available from this lookup.'] },
+  ];
+}
+
 function addressDetails(ip) {
   let canonical = ip;
   let scope = 'Public-address candidate (not a routing guarantee)';
@@ -281,8 +323,42 @@ let intelligenceController;
 let lookupId = 0;
 let activeReport;
 const exportReport = document.querySelector('#export-report');
+const printReport = document.querySelector('#print-report');
 let busy = false;
 status.textContent = '';
+
+function copyButton(value, label) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'copy-button';
+  button.textContent = 'Copy';
+  button.setAttribute('aria-label', `Copy ${label}`);
+  button.addEventListener('click', async () => {
+    const message = document.querySelector('#copy-status');
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(String(value));
+      message.textContent = `${label} copied.`;
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = String(value);
+      field.setAttribute('aria-label', 'Select and copy this value');
+      message.replaceChildren(document.createTextNode('Clipboard access is blocked. Select this value and copy it: '), field);
+      field.focus();
+      field.select();
+    }
+  });
+  return button;
+}
+
+function recordLink(container, label, url) {
+  const link = document.createElement('a');
+  link.href = url;
+  link.textContent = `${label} ↗`;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  container.append(link);
+}
 
 function renderFacts(selector, fields) {
   const list = document.querySelector(selector);
@@ -292,7 +368,11 @@ function renderFacts(selector, fields) {
     const term = document.createElement('dt');
     const detail = document.createElement('dd');
     term.textContent = name;
-    detail.textContent = value === null || value === undefined || value === '' ? 'Unknown / not provided' : String(value);
+    const present = value !== null && value !== undefined && value !== '';
+    const text = document.createElement('span');
+    text.textContent = present ? String(value) : 'Unknown / not provided';
+    detail.append(text);
+    if (present) detail.append(copyButton(value, name));
     item.append(term, detail);
     list.append(item);
   }
@@ -301,6 +381,7 @@ function refreshRawEvidence() {
   if (!activeReport) return;
   document.querySelector('#raw-evidence').textContent = JSON.stringify(activeReport, null, 2);
   exportReport.disabled = activeReport.geolocationStatus === 'pending' || activeReport.intelligenceStatus === 'pending';
+  printReport.disabled = exportReport.disabled;
 }
 async function showIntelligence(ip, id) {
   intelligenceController = new AbortController();
@@ -311,6 +392,12 @@ async function showIntelligence(ip, id) {
   document.querySelector('#network-source').textContent = 'Waiting for provider…';
   document.querySelector('#registration-source').textContent = 'Waiting for registry…';
   document.querySelector('#routing-source').textContent = 'Waiting for routing data…';
+  document.querySelector('#cidr-explanation').textContent = '';
+  document.querySelector('#copy-status').textContent = '';
+  const records = document.querySelector('#record-links');
+  records.replaceChildren();
+  recordLink(records, 'Public registry record (RDAP)', `https://rdap.org/ip/${encodeURIComponent(ip)}`);
+  recordLink(records, 'RIPEstat routing record', `https://stat.ripe.net/${encodeURIComponent(ip)}`);
   const address = addressDetails(ip);
   renderFacts('#address-facts', { 'Canonical address': address.canonical, Version: address.version, 'Address length (bits)': address.bits, 'Locally recognized scope': address.scope, 'Expanded address': address.expanded, Decimal: address.decimal, Hexadecimal: address.hexadecimal, Binary: address.binary, 'Reverse-DNS query name': address.reverseQuery });
   const links = document.querySelector('#reputation-links');
@@ -333,7 +420,10 @@ async function showIntelligence(ip, id) {
     renderFacts('#network-facts', network.network || { Classification: 'Unavailable' });
     const routing = data.routing || { status: 'unavailable' };
     document.querySelector('#routing-source').textContent = `${routing.source || 'RIPEstat'} · ${routing.status}${routing.message ? ' · ' + routing.message : ''}`;
-    renderFacts('#routing-facts', { 'Observed BGP prefix': routing.prefix, 'Observed origin ASNs': routing.originAsns?.map(asn => `AS${asn}`).join(', ') });
+    renderFacts('#routing-facts', { 'Network range (CIDR — not a website)': routing.prefix, 'Routing network IDs (origin ASNs)': routing.originAsns?.map(asn => `AS${asn}`).join(', ') });
+    const range = describeCidr(routing.prefix);
+    document.querySelector('#cidr-explanation').textContent = range ? `This block contains ${BigInt(range.count).toLocaleString()} addresses: ${range.start} through ${range.end}. These are address values, not links to websites.` : 'A CIDR range describes a block of addresses, not a website.';
+    for (const asn of routing.originAsns || []) if (/^\d+$/.test(String(asn))) recordLink(records, `Routing record for AS${asn}`, `https://stat.ripe.net/AS${asn}`);
     const labels = { is_vpn: 'VPN', is_proxy: 'Proxy', is_tor: 'Tor exit', is_datacenter: 'Datacenter / hosting', is_mobile: 'Mobile network', is_crawler: 'Crawler', is_satellite: 'Satellite network', is_abuser: 'Provider abuse indicator', is_bogon: 'Bogon / special-use' };
     for (const [key, label] of Object.entries(labels)) {
       const item = document.createElement('div');
@@ -351,6 +441,7 @@ async function showIntelligence(ip, id) {
     for (const event of registration.events || []) {
       const line = document.createElement('p');
       line.textContent = `${event.action}: ${event.date}`;
+      line.append(document.createTextNode(' · Registry-record date, not device activity or location freshness.'));
       document.querySelector('#registration-events').append(line);
     }
     const contacts = document.querySelector('#registration-contacts');
@@ -386,6 +477,29 @@ exportReport.addEventListener('click', () => {
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 });
+printReport.addEventListener('click', () => {
+  if (!activeReport || printReport.disabled) return;
+  const report = document.querySelector('#printable-report');
+  report.replaceChildren();
+  const heading = document.createElement('h1');
+  heading.textContent = 'IP Locator · Public network report';
+  report.append(heading);
+  for (const section of printableSections(activeReport)) {
+    const block = document.createElement('section');
+    const title = document.createElement('h2');
+    title.textContent = section.title;
+    block.append(title);
+    for (const line of section.lines) {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = line;
+      block.append(paragraph);
+    }
+    report.append(block);
+  }
+  document.body.classList.add('printing-report');
+  window.print();
+});
+window.addEventListener('afterprint', () => document.body.classList.remove('printing-report'));
 
 function showEstimate(data) {
   renderFacts('#context-facts', data.context || { 'Additional fields': 'Not provided; inspect raw responses below' });
@@ -418,6 +532,8 @@ form.addEventListener('submit', async event => {
   activeReport = null;
   document.querySelector('#intelligence').hidden = true;
   exportReport.disabled = true;
+  printReport.disabled = true;
+  document.querySelector('#printable-report').replaceChildren();
   busy = true;
   submit.disabled = true;
   submit.textContent = 'Locating…';
@@ -428,7 +544,7 @@ form.addEventListener('submit', async event => {
   status.classList.remove('error');
   try {
     const ip = normalizeAddress(input.value);
-    activeReport = { queriedIp: ip, checkedAt: new Date().toISOString(), geolocationStatus: 'pending', intelligenceStatus: 'pending', geolocation: null, intelligence: null, limitations: 'Public network data cannot identify a device, account, or exact physical location. Unknown flags are not negative findings.' };
+    activeReport = { queriedIp: ip, appVersion: APP_VERSION, checkedAt: new Date().toISOString(), geolocationStatus: 'pending', intelligenceStatus: 'pending', geolocation: null, intelligence: null, limitations: 'Public network data cannot identify a device, account, or exact physical location. Unknown flags are not negative findings.' };
     void showIntelligence(ip, id);
     const data = await lookupAddress(ip);
     activeReport.geolocation = data;
@@ -438,6 +554,7 @@ form.addEventListener('submit', async event => {
     const comparison = data.comparison || compareEstimates(estimates);
     document.querySelector('#location').textContent = comparison.state === 'disagreement' ? 'Location estimates differ' : [data.city, data.country].filter(Boolean).join(', ') || 'Location estimates';
     document.querySelector('#result-ip').textContent = `${data.ip} · ${data.type}`;
+    document.querySelector('#result-ip').append(copyButton(ip, 'IP address'));
     const summary = document.querySelector('#comparison-summary');
     const summaries = { disagreement: 'Providers disagree on the city or region. The actual device location is unresolved.', agreement: 'Both providers report the same city and region. This does not verify the device’s location.', limited: 'Only one provider returned an estimate. Cross-checking is unavailable.', incomplete: 'Providers returned incomplete city details. City agreement cannot be determined.' };
     summary.textContent = summaries[comparison.state];
@@ -468,6 +585,7 @@ form.addEventListener('submit', async event => {
     showEstimate(activeEstimates[0]);
     const dns = data.reverseDns;
     document.querySelector('#reverse-dns').textContent = dns?.status === 'available' ? dns.hostnames.join(' · ') : dns?.status === 'not_found' ? 'No reverse-DNS hostname was returned.' : 'Reverse DNS is unavailable. The location estimates above are still usable.';
+    if (dns?.status === 'available') document.querySelector('#reverse-dns').append(copyButton(dns.hostnames.join('\n'), 'reverse-DNS hostnames'));
     document.querySelector('#checked-at').textContent = data.checkedAt ? `Providers checked ${new Date(data.checkedAt).toLocaleString()}. This is the lookup time, not the age of their database records.` : '';
     results.hidden = false;
     status.textContent = '';

@@ -1,5 +1,14 @@
 Portable IP Locator for Windows 10/11 x64. Download **IP-Locator.exe** below, then double-click it. No installer, Node.js installation, or administrator access is required.
 
+Version 1.3.0 makes results easier to understand and share:
+
+- Routing ranges are labeled “Network range (CIDR — not a website)” and include address count, start, and end. Origin ASNs are labeled routing network IDs.
+- Copy buttons for IPs, hostnames, ranges, ASNs, and other returned facts. If clipboard access is blocked, a selectable text field is provided.
+- Explicit links to public RDAP and RIPEstat records, separate from the target address.
+- Installed version and an official Releases link in the footer; JSON reports include the app version.
+- Print / Save PDF produces a readable summary with sources, source availability, credit, public contacts, and limitations. It uses the browser print dialog and includes no live map or scripts in the printed content.
+- Registry event dates are distinguished from lookup time, device activity, and geolocation freshness.
+
 Version 1.2.0 adds an expanded public-IP details panel:
 
 - IPv4/IPv6 canonical, expanded, decimal, hex, binary, reverse-query, and common special-use address facts.

@@ -15,6 +15,10 @@ const result = { ip: '104.26.5.123', type: 'IPv4', city: 'San Francisco', countr
 
 async function checkPage(url) {
   const page = await browser.newPage();
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.copiedText = text; } } });
+    window.print = () => { window.printRequested = true; };
+  });
   let payload = result;
   let payloadStatus = 200;
   let intelligencePayload = {
@@ -56,6 +60,31 @@ async function checkPage(url) {
     const report = JSON.parse(Buffer.concat(chunks).toString());
     assert.equal(report.queriedIp, '104.26.5.123');
     assert.equal(report.intelligence.network.indicators.is_vpn, false);
+    assert.match(await page.locator('#app-version').textContent(), /^v\d+\.\d+\.\d+$/);
+    assert.equal(report.appVersion, (await page.locator('#app-version').textContent()).slice(1));
+    assert.match(await page.locator('#routing-facts').textContent(), /CIDR — not a website/);
+    assert.match(await page.locator('#cidr-explanation').textContent(), /104.26.0.0 through 104.26.15.255/);
+    const currentUrl = page.url();
+    await page.getByRole('button', { name: 'Copy Network range (CIDR — not a website)', exact: true }).click();
+    assert.equal(await page.evaluate(() => window.copiedText), '104.26.0.0/20');
+    assert.equal(page.url(), currentUrl);
+    await page.evaluate(() => { navigator.clipboard.writeText = async () => { throw new Error('Blocked'); }; });
+    await page.getByRole('button', { name: 'Copy IP address', exact: true }).click();
+    assert.equal(await page.locator('#copy-status textarea').inputValue(), '104.26.5.123');
+    assert.equal(await page.locator('#record-links a').first().getAttribute('href'), 'https://rdap.org/ip/104.26.5.123');
+    await page.locator('#print-report').click();
+    assert.equal(await page.evaluate(() => window.printRequested), true);
+    assert.match(await page.locator('#printable-report').textContent(), /Developed by Justice Floyd/);
+    assert.match(await page.locator('#printable-report').textContent(), /not a website/);
+    assert.equal(await page.locator('#printable-report img').count(), 0);
+    await page.emulateMedia({ media: 'print' });
+    assert.equal(await page.locator('main').isVisible(), false);
+    assert.equal(await page.locator('#printable-report').isVisible(), true);
+    const pdf = await page.pdf();
+    assert.equal(pdf.subarray(0, 4).toString(), '%PDF');
+    assert.ok(pdf.length > 1000);
+    await page.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+    await page.emulateMedia({ media: 'screen' });
     const estimates = [
       { ...result, provider: 'ipwho.is', status: 'available', city: 'Jackson', region: 'Mississippi', latitude: 32.2988, longitude: -90.1848 },
       { ...result, provider: 'ipapi.co', status: 'available', city: 'Tupelo', region: 'Mississippi', latitude: 34.2576, longitude: -88.7034 },

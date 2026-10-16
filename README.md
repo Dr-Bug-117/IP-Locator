@@ -1,5 +1,7 @@
 # IP Locator
 
+Version 1.3 adds copy buttons, explicit CIDR/ASN labels with range bounds and address counts, official registry/routing links, and an installed-version footer. Print / Save PDF opens a formatted text summary in the browser's print dialog; choose Save as PDF where supported. JSON and print summaries include the app version and source availability. Clipboard failures provide selectable text rather than navigating to an IP. Registry dates are not device activity or geolocation freshness timestamps. The build reads the version from package.json so the website, standalone HTML, and Windows package use the same version.
+
 A responsive web application for looking up the approximate geographic location of public IPv4 and IPv6 addresses. Displays city, country, region, coordinates, timezone, ISP, ASN, and an OpenStreetMap map.
 
 Version 1.1 compares ipwho.is and ipapi.co estimates side by side, highlights city/region disagreements, and lets users select each provider's map marker. Network ownership is separate from physical location. Reverse-DNS hostnames from Google Public DNS are shown as clues only. Provider agreement is not proof of device location; the separation between markers is not an accuracy radius. A provider or DNS outage does not discard another provider's successful estimate. Lookup timestamps are not database freshness timestamps.
